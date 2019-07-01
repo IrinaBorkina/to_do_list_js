@@ -3,11 +3,18 @@ const inputTask = document.getElementById('new-task');
 const unfinishedTasks = document.getElementById('unfinished-tasks');
 const finishedTasks = document.getElementById('finished-tasks');
 
-function createNewElement(task) {
+function createNewElement(task, finished) {
   const listItem = document.createElement('li');
   const checkbox = document.createElement('button');
-  checkbox.className = 'material-icons checkbox';
-  checkbox.innerHTML = '<i class="material-icons">check_box_outline_blank</i>';
+
+  if (finished) {
+    checkbox.className = 'material-icons checkbox';
+    checkbox.innerHTML = '<i class="material-icons">check_box</i>';
+  } else {
+    checkbox.className = 'material-icons checkbox';
+    checkbox.innerHTML = '<i class="material-icons">check_box_outline_blank</i>';
+  }
+
   const label = document.createElement('label');
   label.innerText = task;
   const input = document.createElement('input');
@@ -32,6 +39,7 @@ function deleteTask() {
   const listItem = this.parentNode;
   const ul = listItem.parentNode;
   ul.removeChild(listItem);
+  save();
 }
 
 function editTask() {
@@ -46,6 +54,7 @@ function editTask() {
     label.innerText = input.value;
     editButton.className = 'material-icons edit';
     editButton.innerHTML = '<i class="material-icons">edit</i>';
+    save();
   } else {
     input.value = label.innerText;
     editButton.className = 'material-icons save';
@@ -73,6 +82,7 @@ function unfinishTask() {
 
   unfinishedTasks.appendChild(listItem);
   bindTaskEvents(listItem, finishTask);
+  save();
 }
 
 function finishTask() {
@@ -83,16 +93,54 @@ function finishTask() {
 
   finishedTasks.appendChild(listItem);
   bindTaskEvents(listItem, unfinishTask);
+  save();
 }
 
 
 function addTask() {
   if (inputTask.value) {
-    const listItem = createNewElement(inputTask.value);
+    const listItem = createNewElement(inputTask.value, false);
     unfinishedTasks.appendChild(listItem);
     bindTaskEvents(listItem, finishTask);
     inputTask.value = '';
   }
+  save();
 }
 
 addButton.onclick = addTask;
+
+function save() {
+  const unfinishedTasksArr = [];
+
+  for (let i = 0; i < unfinishedTasks.children.length; i++) {
+    unfinishedTasksArr.push(unfinishedTasks.children[i].getElementsByTagName('label')[0].innerText);
+  }
+
+  const finishedTasksArr = [];
+  for (let i = 0; i < finishedTasks.children.length; i++) {
+    finishedTasksArr.push(finishedTasks.children[i].getElementsByTagName('label')[0].innerText);
+  }
+
+  localStorage.removeItem('');
+  localStorage.setItem('todo', JSON.stringify({
+    unfinishedTasks: unfinishedTasksArr,
+    finishedTasks: finishedTasksArr,
+  }));
+}
+
+function load() {
+  return JSON.parse(localStorage.getItem('todo'));
+}
+
+const data = load();
+for (let i = 0; i < data.unfinishedTasks.length; i++) {
+  const listItem = createNewElement(data.unfinishedTasks[i], false);
+  unfinishedTasks.appendChild(listItem);
+  bindTaskEvents(listItem, finishTask);
+}
+
+for (let i = 0; i < data.finishedTasks.length; i++) {
+  const listItem = createNewElement(data.finishedTasks[i], true);
+  finishedTasks.appendChild(listItem);
+  bindTaskEvents(listItem, unfinishTask);
+}

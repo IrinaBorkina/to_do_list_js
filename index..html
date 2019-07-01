@@ -13,7 +13,7 @@
         <input id='new-task' type='text'>
         <button id='add'>Добавить</button>
         <h3>Список дел</h3>
-        <ul>
+        <ul id='unfinished-tasks'>
             <li>
                 <button class="material-icons checkbox">
                     <i class="material-icons">check_box_outline_blank</i>
@@ -42,7 +42,23 @@
                 </button>
             </li>
         </ul>
-        
+
+        <h3>Завершенные дела</h3>
+        <ul id='finished-tasks'>
+            <li>
+                <button class="material-icons checkbox">
+                    <i class="material-icons">check_box</i>
+                </button>
+                <label>123</label>
+                <input type='text'>
+                <button class="material-icons delete">
+                    <i class="material-icons">delete</i>
+                </button>
+                <button class="material-icons edit">
+                    <i class="material-icons">edit</i>
+                </button>
+            </li>
+        </ul>
     </div>
 
 </div>
